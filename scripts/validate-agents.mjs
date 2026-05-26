@@ -14,6 +14,7 @@ const requiredFields = [
 ];
 
 const agentsDir = path.resolve(process.cwd(), ".codex", "agents");
+const skillsDir = path.resolve(process.cwd(), ".agents", "skills");
 
 /**
  * 这里只做最小字段检查，避免为了完整 TOML 语义解析引入额外复杂度。
@@ -21,6 +22,19 @@ const agentsDir = path.resolve(process.cwd(), ".codex", "agents");
 function hasField(content, fieldName) {
   const pattern = new RegExp(`^${fieldName}\\s*=`, "m");
   return pattern.test(content);
+}
+
+/**
+ * skill 模板只要求最小 frontmatter 结构，避免为了 starter 仓库引入复杂解析逻辑。
+ */
+function hasSkillFrontmatterField(content, fieldName) {
+  const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!frontmatterMatch) {
+    return false;
+  }
+
+  const pattern = new RegExp(`^${fieldName}:\\s*.+$`, "m");
+  return pattern.test(frontmatterMatch[1]);
 }
 
 async function main() {
@@ -59,6 +73,49 @@ async function main() {
     }
 
     console.log(`[通过] ${fileName}`);
+  }
+
+  const skillsStat = await stat(skillsDir).catch(() => null);
+  if (!skillsStat || !skillsStat.isDirectory()) {
+    console.error(`[错误] 技能目录不存在: ${skillsDir}`);
+    process.exit(1);
+  }
+
+  const skillDirs = await readdir(skillsDir);
+  if (skillDirs.length === 0) {
+    console.error(`[错误] 未找到任何技能模板目录: ${skillsDir}`);
+    process.exit(1);
+  }
+
+  for (const skillName of skillDirs) {
+    const skillFilePath = path.join(skillsDir, skillName, "SKILL.md");
+    const skillFileStat = await stat(skillFilePath).catch(() => null);
+
+    if (!skillFileStat || !skillFileStat.isFile()) {
+      console.error(`[错误] 缺少技能模板文件: ${skillName}/SKILL.md`);
+      hasError = true;
+      continue;
+    }
+
+    const content = await readFile(skillFilePath, "utf8");
+
+    if (!content.trim()) {
+      console.error(`[错误] 技能模板为空: ${skillName}/SKILL.md`);
+      hasError = true;
+      continue;
+    }
+
+    const missingFields = ["name", "description"].filter(
+      (field) => !hasSkillFrontmatterField(content, field),
+    );
+
+    if (missingFields.length > 0) {
+      console.error(`[错误] ${skillName}/SKILL.md 缺少 frontmatter 字段: ${missingFields.join(", ")}`);
+      hasError = true;
+      continue;
+    }
+
+    console.log(`[通过] ${skillName}/SKILL.md`);
   }
 
   if (hasError) {
