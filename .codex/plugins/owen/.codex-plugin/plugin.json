@@ -1,0 +1,31 @@
+{
+  "name": "owen",
+  "version": "0.1.0",
+  "description": "面向 Codex 的多子代理编排入口插件。",
+  "author": {
+    "name": "forjs"
+  },
+  "keywords": [
+    "codex",
+    "orchestration",
+    "agents"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Owen",
+    "shortDescription": "多子代理编排入口",
+    "longDescription": "把 librarian、oracle、implementer 与 momus 组织成一条清晰的 Codex 编排入口，先规划，再取证，再实施，最后复核。",
+    "developerName": "forjs",
+    "category": "Productivity",
+    "capabilities": [
+      "Guide",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "用 Owen 帮我拆解这个多步骤任务。",
+      "让 Owen 先补证据，再安排实现与复核。",
+      "请 Owen 输出这项工作的计划和台账。"
+    ],
+    "brandColor": "#355C7D"
+  }
+}

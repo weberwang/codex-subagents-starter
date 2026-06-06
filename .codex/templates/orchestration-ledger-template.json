@@ -1,0 +1,17 @@
+{
+  "objective": "",
+  "status": "planning",
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "收集上下文",
+      "owner": "librarian",
+      "status": "pending",
+      "evidence": [],
+      "blockers": []
+    }
+  ],
+  "risks": [],
+  "decisions": [],
+  "updatedAt": ""
+}

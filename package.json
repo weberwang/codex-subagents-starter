@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "validate": "node ./scripts/validate-agents.mjs"
+    "validate": "node ./scripts/validate-agents.mjs && node ./scripts/validate-orchestration.mjs && node ./scripts/validate-owen-plugin.mjs"
   }
 }
